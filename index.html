@@ -295,7 +295,7 @@
                 <!-- CTA Buttons -->
                 <div class="flex flex-col sm:flex-row items-center justify-center gap-4 px-4">
                     <!-- Primary CTA -->
-                    <a href="https://calendar.app.google/BKXX7rswC7iWPPU18" target="_blank" id="hero-primary-btn" class="btn-gradient-border group flex items-center justify-center px-8 py-4 w-full sm:w-auto min-w-[240px]">
+                    <a href="https://calendar.app.google/QZTvS9433tJHJcwT6" target="_blank" id="hero-primary-btn" class="btn-gradient-border group flex items-center justify-center px-8 py-4 w-full sm:w-auto min-w-[240px]">
                         <span id="hero-btn-text" class="font-medium text-brand-dark group-hover:text-brand-mint transition-colors flex items-center gap-2 text-[15px] md:text-base tracking-wide">
                             <i class="ph ph-calendar-plus text-xl"></i> 預約 AI 轉型諮詢
                         </span>
@@ -714,9 +714,47 @@
                 <a href="https://calendar.app.google/QZTvS9433tJHJcwT6" target="_blank" class="inline-flex items-center justify-center px-8 py-4 bg-brand-dark text-white rounded-full font-medium text-lg hover:bg-brand-blue transition-all duration-300 shadow-lg shadow-slate-900/20 hover:shadow-brand-blue/30 hover:-translate-y-1 relative z-10 group min-w-[280px]">
                     立即預約諮詢 <i class="ph ph-arrow-right ml-2 group-hover:translate-x-1 transition-transform"></i>
                 </a>
+                
+                <!-- 新增聯絡表單區塊 -->
+                <div class="mt-16 pt-12 border-t border-slate-200/60">
+                    <h3 class="text-2xl md:text-3xl font-bold text-brand-dark mb-4 tracking-tight relative z-10">聯絡我／合作洽詢</h3>
+                    <p class="text-sm md:text-base text-slate-500 mb-8 max-w-xl mx-auto leading-relaxed relative z-10 font-light">
+                        直接填寫下方表單，我們將盡快與您聯繫。
+                    </p>
+                    
+                    <form action="https://docs.google.com/forms/d/e/1FAIpQLSeA_Y_LuIl18qBFPsvyrt5uhJtn65kRBbgWVLuoy9grc5QhzQ/formResponse" method="POST" target="hidden_iframe" class="max-w-md mx-auto text-left relative z-10" id="contact-form">
+                        <div class="mb-5">
+                            <label for="entry_433379305" class="block text-sm font-medium text-slate-700 mb-2">姓名</label>
+                            <input type="text" id="entry_433379305" name="entry.433379305" required class="w-full px-4 py-3 rounded-xl border border-slate-200 bg-white/50 backdrop-blur-sm focus:outline-none focus:ring-2 focus:ring-brand-blue/50 focus:border-brand-blue transition-all text-slate-700" placeholder="您的姓名">
+                        </div>
+                        <div class="mb-8">
+                            <label for="entry_628942220" class="block text-sm font-medium text-slate-700 mb-2">Email</label>
+                            <input type="email" id="entry_628942220" name="entry.628942220" required class="w-full px-4 py-3 rounded-xl border border-slate-200 bg-white/50 backdrop-blur-sm focus:outline-none focus:ring-2 focus:ring-brand-blue/50 focus:border-brand-blue transition-all text-slate-700" placeholder="您的電子郵件">
+                        </div>
+                        <button type="submit" class="w-full btn-gradient-border group flex items-center justify-center px-8 py-3.5 shadow-md hover:shadow-lg transition-all text-brand-dark font-medium hover:text-brand-mint text-base rounded-xl">
+                            送出需求 <i class="ph ph-paper-plane-tilt ml-2 group-hover:-translate-y-1 transition-transform"></i>
+                        </button>
+                    </form>
+                    <iframe name="hidden_iframe" id="hidden_iframe" style="display:none;" onload="if(window.submitted) { window.showSuccessModal(); }"></iframe>
+                </div>
             </div>
         </div>
     </section>
+
+    <!-- 成功提示視窗 Modal -->
+    <div id="success-modal" class="fixed inset-0 z-[100] hidden items-center justify-center pointer-events-none">
+        <div class="absolute inset-0 bg-slate-900/40 backdrop-blur-sm opacity-0 transition-opacity duration-300 pointer-events-auto" id="modal-overlay"></div>
+        <div class="glass-panel p-8 md:p-10 rounded-[2rem] max-w-sm w-[90%] mx-4 text-center shadow-2xl relative z-10 transform scale-95 opacity-0 transition-all duration-300 pointer-events-auto border border-white/80">
+            <div class="w-16 h-16 rounded-full bg-green-50 flex items-center justify-center text-brand-mint mx-auto mb-5 shadow-inner">
+                <i class="ph-fill ph-check-circle text-4xl"></i>
+            </div>
+            <h4 class="text-xl font-bold text-brand-dark mb-2">送出成功</h4>
+            <p class="text-slate-500 text-sm mb-6 leading-relaxed">需求已送出，我們將盡快與您聯絡！</p>
+            <button id="close-modal-btn" class="w-full py-2.5 rounded-xl bg-brand-dark text-white font-medium hover:bg-brand-blue transition-colors shadow-md text-sm">
+                關閉
+            </button>
+        </div>
+    </div>
 
     <!-- 7. Footer -->
     <footer class="bg-white border-t border-slate-200 pt-16 pb-8 relative z-10">
@@ -918,6 +956,55 @@
             window.addEventListener('resize', () => {
                 initParticles();
             });
+
+            // 7. 表單送出控制與 Modal
+            const contactForm = document.getElementById('contact-form');
+            const successModal = document.getElementById('success-modal');
+            const modalOverlay = document.getElementById('modal-overlay');
+            const closeModalBtn = document.getElementById('close-modal-btn');
+            const modalContent = successModal.querySelector('.glass-panel');
+            
+            window.submitted = false; // 用於 iframe onload 檢查
+
+            if (contactForm) {
+                contactForm.addEventListener('submit', () => {
+                    window.submitted = true;
+                });
+            }
+
+            window.showSuccessModal = function() {
+                if (window.submitted) {
+                    successModal.classList.remove('hidden');
+                    successModal.classList.add('flex');
+                    // 觸發動畫
+                    setTimeout(() => {
+                        modalOverlay.classList.remove('opacity-0');
+                        modalOverlay.classList.add('opacity-100');
+                        modalContent.classList.remove('scale-95', 'opacity-0');
+                        modalContent.classList.add('scale-100', 'opacity-100');
+                    }, 10);
+                    
+                    // 清空表單
+                    contactForm.reset();
+                    window.submitted = false;
+                }
+            };
+
+            function closeSuccessModal() {
+                modalOverlay.classList.remove('opacity-100');
+                modalOverlay.classList.add('opacity-0');
+                modalContent.classList.remove('scale-100', 'opacity-100');
+                modalContent.classList.add('scale-95', 'opacity-0');
+                setTimeout(() => {
+                    successModal.classList.add('hidden');
+                    successModal.classList.remove('flex');
+                }, 300);
+            }
+
+            if (closeModalBtn && modalOverlay) {
+                closeModalBtn.addEventListener('click', closeSuccessModal);
+                modalOverlay.addEventListener('click', closeSuccessModal);
+            }
         });
     </script>
 </body>
